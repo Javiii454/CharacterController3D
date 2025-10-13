@@ -88,6 +88,12 @@ public class PlayerController : MonoBehaviour
 
         Gravity();
 
+        if(aimAction.WasPerformedThisFrame())
+        
+        {
+            Attack();
+        }
+
     
     
     }
@@ -149,22 +155,38 @@ public class PlayerController : MonoBehaviour
     }
     void MovimientoCutre() // Pochedumbre
     {
-        
+
 
         Vector3 direction = new Vector3(moveInput.x, 0, moveInput.y);
 
         if (direction != Vector3.zero)
         {
-        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, smoothTime);
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, smoothTime);
 
-        transform.rotation = Quaternion.Euler(0, smoothAngle, 0);
+            transform.rotation = Quaternion.Euler(0, smoothAngle, 0);
 
 
-        controller.Move(direction.normalized * movementSpeed * Time.deltaTime);
+            controller.Move(direction.normalized * movementSpeed * Time.deltaTime);
         }
 
-     
+
+    }
+    
+    void Attack()
+    {
+         Ray ray = Camera.main.ScreenPointToRay(lookInput);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            IDamageable damageable = hit.transform.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage();
+            }
+            
+        }
     }
     void Gravity() // Para cambiar el valor de la gravedad
     {
@@ -199,6 +221,8 @@ public class PlayerController : MonoBehaviour
     void OnDrawGizmos() // Para crear el radio del ground sensor
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(sensor.position, sensorRadius);   
+        Gizmos.DrawWireSphere(sensor.position, sensorRadius);
     }
+    
+
 }
