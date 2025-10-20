@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -38,9 +39,12 @@ public class FPSController : MonoBehaviour
     [SerializeField] Transform lookAtCamera;
 
     float xRotation;
+
+    private Transform mainCamera;
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        mainCamera = Camera.main.transform;
 
         moveAction = InputSystem.actions["Move"];
         jumpAction = InputSystem.actions["Jump"];
@@ -81,6 +85,14 @@ public class FPSController : MonoBehaviour
         transform.Rotate(Vector3.up, mouseX);
         lookAtCamera.localRotation = Quaternion.Euler(xRotation, 0, 0);
         //lookAtCamera.Rotate(Vector3.right, mouseY);
+
+        if(direction != Vector3.zero)
+        {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + mainCamera.eulerAngles.y;
+            Vector3 moveDirection = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+
+            controller.Move(moveDirection * movementSpeed * Time.deltaTime);
+        }
     }
 
 
