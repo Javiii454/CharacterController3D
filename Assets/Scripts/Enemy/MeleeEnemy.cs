@@ -11,7 +11,7 @@ public class MeleeEnemy : Enemy, IDamageable
         base.Attack();
     }
     
-    void IDamageable.TakeDamage()
+    void IDamageable.TakeDamage(float damage)
     {
         Debug.Log("Me Cago");
     }
