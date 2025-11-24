@@ -78,7 +78,10 @@ public class MeQuieroMorir : MonoBehaviour
         {
             _playerGravity.y += _gravity * Time.deltaTime;
         }
-        
+        else if(IsGrounded() && _playerGravity.y < -1)
+        {
+            _playerGravity.y = -2;
+        }
         _controller.Move(_playerGravity * Time.deltaTime);
     }
     void OnDrawGizmos()
